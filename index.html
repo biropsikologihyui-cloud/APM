@@ -11,19 +11,19 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between" oncontextmenu="return false;">
 
-    <!-- Header / Nav -->
-    <header class="bg-indigo-900 text-white shadow-md">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 class="font-bold text-lg">Biro Psikologi HYUI - Sistem Tes</h1>
+    <!-- Header Bersih (Tanpa Tombol Admin) -->
+    <header class="bg-indigo-900 text-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="font-bold text-lg tracking-wide">Biro Psikologi HYUI - Sistem Tes Online</h1>
         </div>
     </header>
 
-    <!-- Login Section -->
+    <!-- Form Login Peserta -->
     <div id="loginSection" class="flex items-center justify-center flex-grow p-4">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
             <div class="text-center mb-6">
                 <h2 class="text-2xl font-bold text-indigo-600">Login Peserta Tes</h2>
-                <p class="text-sm text-slate-500 mt-1">Masukkan username dan password yang terdaftar</p>
+                <p class="text-sm text-slate-500 mt-1">Masukkan username dan password resmi Anda</p>
             </div>
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    <!-- Quiz Section (One by One) -->
+    <!-- Tampilan Ujian Satu per Satu -->
     <div id="quizSection" class="hidden flex-grow container mx-auto px-4 py-6 max-w-2xl">
         <div class="bg-indigo-900 text-white p-4 rounded-xl shadow-md flex justify-between items-center mb-6 sticky top-4 z-50">
             <div>
@@ -64,7 +64,7 @@
 
             <p class="text-sm font-medium text-slate-700 mb-3 text-center">Pilih jawaban (1 s.d. 8):</p>
             <div id="optionsContainer" class="grid grid-cols-4 gap-3 mb-6">
-                <!-- Pilihan 1-8 akan digenerate otomatis -->
+                <!-- Pilihan angka 1-8 digenerate di sini -->
             </div>
 
             <div class="flex justify-between">
@@ -75,236 +75,4 @@
     </div>
 
     <script>
-        // Masukkan URL Google Apps Script Anda yang lengkap dengan /exec di belakangnya
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNs7l1awlW-dDu1O3iKM7BiXUMrut693TE5iR-Xzet3FqUXJ4ui8X_S7jSKXUM31Tp/exec";
-
-        const subTes1Images = [
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5V5WlPH2SsvhZnIaFNAYlihp0ddIk022i6MFEamUD1wPpv4lH4CPM3Zqpoxvz_OWYz4xxLYoq7vvG_tVKHUBulhYxdbpkDa3kSySu9OPT_i5CgQfoCByCDid-W3GLVBmfUmOyBaJsXeWB0njTWY7k2sthLsqLRzSgziXquRT8nSNMzHEk-1UWt9L7AZZY/s320/Screenshot%202026-10-10%20133428.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgjXwBxgTVIBsZXHBDBDTVWQH2HHCVIEjAPF3bRWSmeeJynlcrzsAv6lZ9pHNAU5M3vCuLYwQQqYK1b5R6GGJGzqQz5hckKT7n0ZeWzQZyTlka-ZLN1iQHS4A_Kg7IJ-YvNBKHRiKs4nOlngZ3ySWB4ttalHyDGGZL4YXIMbzMxQJxQ8BGK_54b_6vVvqS1/s320/Screenshot%202026-10-10%20133502.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEie9sYZz3ilS6laD2G7FKIju7ZS4sn7VPboOc9Cixqu_B0haom4SmW0HH4IS2DHVRmQkVSLTWUxgqvNxz-2teBhlx4S-AbcFCBzfPAsp_Ynm-t_-D6vClHspOlAoY_C41H13h1iQmu8QOnk8gn0FvSsbocEO36ZQBD0Bd9kq3Au_-wSpBpW9CQd1uaPSQAT/s320/Screenshot%202026-10-10%20133511.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEie9sYZz3ilS6laD2G7FKIju7ZS4sn7VPboOc9Cixqu_B0haom4SmW0HH4IS2DHVRmQkVSLTWUxgqvNxz-2teBhlx4S-AbcFCBzfPAsp_Ynm-t_-D6vClHspOlAoY_C41H13h1iQmu8QOnk8gn0FvSsbocEO36ZQBD0Bd9kq3Au_-wSpBpW9CQd1uaPSQAT/s320/Screenshot%202026-10-10%20133511.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcc19NA0mKbhpaCe6ocP7N_ovW5cvrmVc9AYfoZupuKVNXT7JufhvUkeUfqWqtN7h4ZH0gGbMsYLIZgEehth_0becYBKob-gpF_Qm1YRo0xM2Y79QZvGgns92p7vWdVOWBjZr5scRhjMxa0LQ_PkbuW6rbzQH7KKbzMXVmh_MIcP_tlTD_jzEa_cEvI0tG/s320/Screenshot%202026-10-10%20133537.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiMdbPi8XAnvYF62s6TK90KzXuHtovFqcEULs3SbniwxhKYWGxGlARuQbV76YicUNtcCtpVShbqM_5PwEvsXOMckmess5j9fHRjEkFQ3neCuWferlf-CwMx8S28Dm0dEPs3iE-zj4c9dwHJtR09Iu9O-g8ohtZJka3cnVTqnHnCyG382Yt4kPyWoVC21Pj3/s320/Screenshot%202026-10-10%20133555.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi8OW7YX16UCtANZJde7pdHizETdlCrYDMlX8AqYcGrE25d23EuMazWs73NMpUbPz_VcDc5dksTXXahkceOJvHyveSUVcbyBZXOAAaC3JcfIL9MngGRvGpGVdS13GGBUJ5PEphsaqsrmekVGxTXAC1aLM5RUpdaNeOM7rJ5DDKLYR-0nOoNiPFBuWiyuSWN/s320/Screenshot%202026-10-10%20133605.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiLy3Ge6iixrlqlt_J8LxBSFAFxAUp27HDtPIbpOLgi0wehnzRXO32UbhN674odZswNtS3OK3cmFGwkGybmDdSkoaPjs8BbqSaujwH4fWvrvA0o_x3RqTkbZL8qFdghmDlQVW1Qd4uHYCKNNuEHaZdcPmL_QRGEV2irwK3fCiTgzDyVQafS1QjI20ZoXgqb/s320/Screenshot%202026-10-10%20133613.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg6_fbw3IW0gCQVN_tXtmviflSpw2_k9cgRvoLuI3Pok1f3GPUqTk3HlCMf_UbBsy61zY4bva6Qr5ezni0SJWfTplTaS4oy6KSOHetE91d1P3gFnqG6z3I5ApC09AW36Nyx0TCB-ndSoryp-YwtLPxMqE9WArdGcpXSD9d_5W8imI_rZyzkU3EOOz1omJZN/s320/Screenshot%202026-10-10%20133621.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQz9O8qREwh_CdgJe1w6v3DL6dKcAdjO3EloY-n3eqDDrjKqLkR-lCS-0keB0dMV-GOoGiVULtSPoarS_6xGuyyIOSmKcRAezG42cEqUP3V4kLCSYedYmcjdONwz5FNJOtT5trT1Li4jPqTdfsRbAMBn6tszzJ_c6JYujMfxwX6TVciiNTxmLVZF0mSsNu/s320/Screenshot%202026-10-10%20133629.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQtNpQoAkBRNfYSd3uM1Fgr4G9KIULmmVniB4JX2JJiUy6EGwxi-kz12MVraRfOnAeD6GOcNZDK3-9rYea5AkAGxK_tUW_m7nImveC3Vc5FY44AnsbLPQtD6lmYtTI9Lk-xVuYW_1sqt1EBk-Vq3Td4cgD7L8kp4r6LSPluoDEblvT8v5YFdAHQv8RXZvc/s320/Screenshot%202026-10-10%20133638.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2wK-s7SNhw9o70H5xPPbs5e1JCrwv7Sbq5lMDBmYUDgH68SvmWRARz3d-k089D5QaiOdZmofuUOGIkqd2BbuZ3xkBJJVmAA8CKJt1Df_FQnBU1xMMby0c19VeviJbBXP8f4JW8uqRprTCZqtvdIfdSc0YSMC_-nw3FCGRAneuErYHO-ItO4XM9h7HHD1v/s320/Screenshot%202026-10-10%20133650.png"
-        ];
-
-        const subTes2Images = [
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgLJV-oETC8TQqQ2XjINj3cS1B7qEaQrxCqYqzAaS3RJRu1HP2UeSqd9wf3zZtLbD70eb3PNgwXCw1oVb559UhjKvHy5CkCWeC4c7IWDLV85Mga8Kg-XnVOWDUSxXOJZqYheiwJbXApKhbGm3yaAGQzjf-8uW-wS0kUFASO5miOX9nyeBz6lUjMMfAYyLT0/s320/Screenshot%202026-10-10%20134506.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEibZIyZubsGoOT-ADFtsmAYSf2hGT2FzJmE2_vp1u-_EbOMHBwoGWk15CIOYrZtZtz83i8QLZQJrPhdDhwSHqxu3a4wCe3yt2I-yeNdKhcdMsERSg8WY4Ni8Jerl7tyJnyue0c1YIfowWIsj0U29Gf8p_-xc04NVWpiQKdDj_MdAP1YqgeGpHw-EwEsIuvl/s320/Screenshot%202026-10-10%20134514.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3E8XJ4ua_MvSmcyULudGbL_9i4YsdSG0ndC_13CUDL4qCZVlyyE3TmbCbEuDVi36ZrwU0BZ0uoegAMaOciKevq6H0To74h-l_5CA3MSgiGTh7cZs0ZraUGucYWHP5j3rAq_1JkQiSI6ji20WL8Afl0sztxA53-Ewv0UCWnpquZMrPhVGN4gcrrght_00D/s320/Screenshot%202026-10-10%20135405.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWHT7HfrIW_3eCAceXbBJkRDMX877xw8c6iNC5qVJtdomd_p_nKKfXwziHLckErNL2fzGDnYW0b1rKBpzkefczQxBNpqJS4xrAJ_qa6Kfv4vPbrXVYvnxiJyKH9J2zH05PzVHUN8773NzY3x_rPoViK29ldQDK2i6zR0YocoICxkzwQVL51qbAe-rAonsH/s320/Screenshot%202026-10-10%20135415.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg72oQgaymQT-TV5YDx1x2ePHe6WtY4-tKWvqB_4VIiVvgjB4UZgTLfbSNEmAnkwyxvdMXZlaYmWziBQEI0EpXdtqO6jgLt6eUtb9oywIEtRbDoLabrNrRjYb5KcxqyDD-5Cu0GrSC-NokHvNHLSEPzQfQgKfwyfd4-vb9BI5z4B14e25-5NiAFq9_fHVsU/s320/Screenshot%202026-10-10%20135425.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg6wHMPpUjYuRJP6LDGAtPmrEDODCwUN57sn-wR9iZtJG2LwdPUTncA2VSIEbAX2c5Q5zp_TOxK13gxNhBGlGfJ98UI6ujfrx657LlqOjYv5X_dG5mMLwm0L8kB2t27NsfCA7MnVWdCXixg9ui7Z0Vna5QBV_AAEpTxC4rymSmb6ewS6x8fIfd-KO_2rPca/s320/Screenshot%202026-10-10%20135434.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFHWJ35s5ZXr2xADk6iaeVl-gzaXQbyUCGV39vnv6xkVCY33k5XUlO26OI3KOLsihij0I_ov1PbteN-W4ypAwdSzCnirCyx19bhUsOMPqfkQaFoZNVvPLEpVEMCsi4S1pvuB9XNbRaXYkV5GBYJcMITHE9_QXiFUtfRyqSR6OmIaUuFSYpVnsd9ONCRzyP/s320/Screenshot%202026-10-10%20135442.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh0yk4q26dppptrSQctYVyMus5AKHqpWUOI0Z-UmWuVKgss6YnsGYD9kRzt-2M6ZyJRr4yqQgFRj4FGldYOIFSdr305iTPWylUgQCIIutEPJbxCoftPPBwlITqXQbNeid7p0FaD_UMIBUVOEWx2lw_K30nrbIcq8cc54pPtkG-t9ZtxJMtl_DD51GXNpk-X/s320/Screenshot%202026-10-10%20135450.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEimZw2iEFacmbxm8Q90-KHUJPfJFIFV-9PzMdbRCnEqZOtO-ztCmojOaaF5bgJnIrSUK-P5vIyV0nvEACOeH1zuRwojvNfU_Oq7hdwE0pi39qaL1dr2rwWtXOZbmbfVfkaaDT2H5-OOUUvvE7XL7qaDqu236Xgueg8gk0NPV0JTUfKiOXnKiYKGFqtP9neZ/s320/Screenshot%202026-10-10%20135459.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhBiID-11kDkd-8NAiR-FIYhPwhr3hj_pjN_eK64bU2fyz1N7vAeH2aY7KsUgfIrLc0Y434zGlX2qdOAj9IcITW3mZQBrlMgyIimvc1D0IkOf-ne6nKUbglRi28tBjL2K9zwSBo3umlGFsvA6hqimJN_kcJhTr0GE_yYgvS8R_NdVi7RDZKBgP37CYT243a/s320/Screenshot%202026-10-10%20135507.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgh5N6BQJbBLJMiTUn6zTOFaKR61liMXKtpfEkrv2NV5I5-eqmJgrviIkvR1ZF-TllasnjsrixTF_jlSQ1q0l7tZRl7X3IQ1GOz8lvPwgg1qa1432kDrHDJbCOgxAq9XeAqlDJwVK7ORR0QTwfc2WOgGZLhHb4sGKXdYr2rpBx51MJwtvR4E43AooSJZZ8k/s320/Screenshot%202026-10-10%20135517.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj-wub3rvg4ksDWdzlX2lU3Knmq4W_kqT0mrPVoucxSmNsjSGut2N0CIBUikUIK0q3Rw8ES_2qGzxryTxvkTKfFpaTiR7nHTK_QogTp6ksA4JVfAZFxuKCAEolwaxN4wl9-tw5lkja8KJcWoxlT5GDJT3xzsX3zaVn6GabBW78T-o9N3IDMLDmIyr52hWkD/s320/Screenshot%202026-10-10%20135525.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiSVj-08ZUm97VjPNQTVmLFkhGgGAUCCfTX-1sEXX0HzhqexT90WtEtDrkvQ39Lq1mfP6960sfG7falBJMIqQr8MAy2DM4jDL-cwh4Tw_Cad-462JpSNcjNtKDf5puq4NOQXGRVvHckuHS4eci5GnTixmVClFTKIVCJy_yoh8-ApBOMjC6rS41tMMhNIncl/s320/Screenshot%202026-10-10%20135533.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiOI5vrSLbUC_DAtr_ipASTFSccbckmZseo8kVX7vS8t3wDVKnD3YVEkrFYJpcxsqS392f1wjGWRiArYOkvV5_Vb0lWJgje6VXGj8TdaN5WB7ovDhTf6-5BLp5GROtHxJAmydVI-oasgH4VwSKJxoh4UD5uWF-ilT1zAMSoY4L_HM2e98M69yqzhFiWWHN4/s320/Screenshot%202026-10-10%20135540.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgqiao1CnP0yWLMydBgmSyhyehBy5jYMS5shT1tHN5L4p6UnYHVKJuclIdtUrhZ0XQgVWvw3lP7fpXDnyVT7qks_srBseHVUXNdcjUHivZ8C7KOQyNJ-ky7OMwD3MHv5NrK_qHYECY-mmshNNVd_RR6f9xoENWqmE5TrtmI1f0seC-uWD8k2qTJ9YBzW01-/s320/Screenshot%202026-10-10%20135552.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-P_V6e2wCuu_cNYPihqPftsvZ693Q-bfKvs8eAJbC2N5xyhy3KieTQpHl9GEacGZkuyCid2UhVvdOFOMKNGYi_Kj30hO9ckCk7MDSa383xVMt2zkhRbPYIS_wI2xuUVhvxty-MsKWanf2uck_O8Xln7-kUIOLMzanZEkqGtVsTsHllQjueM4XD9x07sWY/s320/Screenshot%202026-10-10%20135602.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjmdGfWiL0l7EEdBLC0U4_TCiYtwrSDOK2QyOJ_3a4-pDti0J2BC7__MmSTlGRk8f1gdMStk6KjFMPWUO-jR5lGZl6DmUxKBHOWbk2F2hPu8BFNxebLkMA7BxMuaY2jfcpMIo9sP2imV2SK9BzuGpbeYKREK0wnt6bnSoz7Tzk_rmbvh_miV3BzhqNEIL9v/s320/Screenshot%202026-10-10%20135611.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiERaGZE0BB-UjILQwadyulhCmYOKzoD8IxLGlee8oe8F3Evz3Q-XYBvVPtU79J1z-4M1OoR03U2qQf0PWX9FtqkyryHGHh2v7F056HBfYaHax3bNbGj4-k7p5Mj9OJSaHEWxUXUsm8xmWlt5NHmWWeHMzuzto4zYL9071Im_p0G4oSYKUlmnhz__WG6FcL/s320/Screenshot%202026-10-10%20135619.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhLgHjcBuiQiTLqXDIotB1o3DwW30sg5Xt75TnFcJ6xRiiTzxfBVaGZYIHZlYgWlCsyyzGB7LHRMmexQdfcwpCz2MIfRfPGr9VHEUDV9hR6OQdx7b2uOUQ81n-Yz_tGJ4P6P_AX8giALl7t7cGEVeFLcUgJeqNhSQ7AGeAoWanC5uQq5QIIczPSEuS24A4o/s320/Screenshot%202026-10-10%20135628.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjIXJLnyw2HnFr3dOdjsiwXRV_vlBBrq7Yqo0cz3Q1xmKHgyiEvGV1q8gewiqILaqRH53Ltz_HPwNfBjm4W_cFN43UFXnuNDsA7AgCcEgO038tyjtnR9ddw9YYwxQ0qCkkhFHio8I5yUL6O9nEBpLyjL2H3N_BjYRv4xyGtFIDjRhQNm9iDooX16fTs407b/s320/Screenshot%202026-10-10%20135638.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJq18PR6ugqPVgGHJrdJBj0PdhE2eCcXQXpymgIvdNgg2PedsWbG7aOpqQJ5HXTI0x1UsmOjua2kTWge9oezmKoU8EnOr_nfTnFe1wa4BNk5pOCFD_jevgZOJHlBetC_YtchCyVxHFlyPs0HgFQoDAIIfotA21QgXqCQ1-8qV1Eoxbfv0BNXahg4TP9jOK/s320/Screenshot%202026-10-10%20135654.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2m-zfj-Nblv3SkTY3ti3Booa-Rv3fO7NEinpzGR8QyMMaVVIVkca5HLK1R1QUbu7P8mi7JOVCGS6QyNXXw87ygbGBKSAfkKwDmQTP8xefxQ6weROWtON7DNJpRN0eA34KhZWgIrFcjjliOBNiU451ulBXF2yVJboCps9zMfo-AFombKi-MLJktw9Eh1nt/s320/Screenshot%202026-10-10%20135703.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgrngPLKONOKBa1AO7q2ayfk2gOrdsr_v1XlAHpi70NPnvX0TqPy9EvRGpqt3R9nGMW14riYxjGrRDJj14fYUCNpXf4_RrbKE_3J3QLNxYcZewhRYa8EIpnrCD6TK6814JDLT4-gB6Ly7bWyzHor913sY8D_rqLawhjULCKzbOm66_TEpfU2xRwTPJ2O60a/s320/Screenshot%202026-10-10%20135712.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifqhw7PNcfQ35UKtmX3kPrYL0RJdFH2yh-Hee_JguiFsktDL_QSCGBb2Lwb44rivRpNKLvI5Bx88OX7cx_lx6zsFNFH2E_i3CHWDKOjpleGGitDFHyVGxV7YuIjkfSMcGCF7qvFMkyQJdfakrUBDSAhZah4S5a4RRkbkK7KnoABHU307G6bziPHRikLJSx/s320/Screenshot%202026-10-10%20135724.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBhtzlF2Lriw-mkz_Co16MEVgJHmy03CSvv57U5x3QnSCJYM1MQ5f3BcegkREnHh3dJyJMol9Ad2i7ADZQyqbeJ5-guHInzOMHDMIVfkVzTLzNILy7b3xca1PjAmPtZfqYXETHZO9z1BW_O_cb6A7CcvlNm71wcZobW9SRrjpvdS40NgKuDMgAPfnqkpdx/s320/Screenshot%202026-10-10%20135733.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgMD6_Gi6SqqkJqpikpePkssCq13b0oylFvmuN_ESDJ5ymtEHbgO952C5X0pKc72iWLa6ggICe7XcgkBTQmxjqZk4gxmLHXraR2D1Hn6Y7mmlDdHQPK6emnIQJpKUH8wVthQg1SWVy96jeata2fXoX6CruhOy3FTqs1Lb3dCZV2zDSWz2AMn7lv5YTSDuoU/s320/Screenshot%202026-10-10%20135742.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgC0zVgya7ypIus8PGJafcswg2IVdQ26uS71J-M20Ac_qUjaO8QU__uJM1pBud7InhEHglmXt2ar3IIHv3L_hcUoZG2nCGykHlGdb-HH6uzZUJ6a_UjHiaK0V3uWqwFE3G_2zevrAgg_UqkLwvTR-FBfieNe0_CzrKqLpm2iW26BLMOrKjcT9ICNtuBfZpL/s320/Screenshot%202026-10-10%20135750.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjn2SKABZM6kCwmzdsi2YQ7rqjfapDelR0UPc6v6kkJxpNPAbnsBR2A_Dt1LfLLfi4qPtSIfd2uhDUWrBHPem8TGl10cCn7wNDacZ53Ja81c9iIuxrDhwlc8FDdoe46gWThJoX5YSO08rgyO66Ny_7akpSoqMZAA9uGcuT_MVRhn0uIPquwkRziQ72HaOVv/s320/Screenshot%202026-10-10%20135800.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh6q-C2Of0csDwCz_3hsP0K61sfkGl4HX_QL4dIikvGqRPsXumPPN3PCZabUdRA8dpQLxXIpI9WetA5i5LCE3YGoFOrBNxChJm1ix1p-j5BuULJZs9i0Q5gcnuh7CUKqpbRIJ33tvKTDsoS08WRyZaWiU5dFkxj1rDhN1yUt1s6YGtdTfWhr5oZFB15Gq-m/s320/Screenshot%202026-10-10%20135811.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhicu0SF8FEveGHQHOtPDhDD9EOdlRMvQnyl8RBAZGybvCko9-AGdsZ7S0EgjCSgE1b7QKNR5YdyJk1LKoOjiGg1o0ugR_tsTRQSk7cMbXL9JXcX8WELcmjI23e0oO4vVIhRfYuWaUghOoj_BjIQpH7q3JPJNtQv_Igy9-V4Vswi8wu1ZtnwsW4GdTZOG9k/s320/Screenshot%202026-10-10%20135822.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhElYFT8NQYpsRs6dYmLdFAmfKCefrQr0D5Lwaf8EFOOtpsinCbhAmG7y5syFHtjnJMIO0i_BS_aY9iRu892IDQOJ1yKW7uae1s8h-lUDJzcQI5-ylggepmlMGhZg4xgF8x_kXHPpOb_l5mVZIIbCFoEY0UFMuUdEDC8c_XCQ63ubbVOf6_UKHLy8Mnq7H3/s320/Screenshot%202026-10-10%20135833.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjG_CH9quIIdpjw-tlSlbgGZbscandkD-RZLJWITg9ugM1iaufQBxBnNJc8LQYB4s7om_3tcXjAoxIgK_nYJWkwp2kYhDfJtPl9p4Oq-rvgvI4c8xsA_61i9qCA6ixXyh86M2MKDKFVxSKJHocJ2-f7y4UcBPE970Fe9e6Pcz9nh6AmwL68vpfsPGILJI1a/s320/Screenshot%202026-10-10%20135841.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSqmsLAaEaMNZeSj1cOJONvP35NLLyZrIAwlp40-5BO0aYxNNRI4hwdjMDe5wMPTMxQQRF3XWGB6eCY8uhgT0iAgaJwZUVqdXkhbpRdKWiNcZNu6DYCJd634nA9SFvIRwaxollUF9uuDXi7KLrADVkMorxk7NZw-ADtuoapXyVx0VNyF6H6LEMIkDrO6mq/s320/Screenshot%202026-10-10%20135849.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj5VpEeBeO3ujXDbQI7lXsV6EYn8bXvyeJ_6fiwYB-jBFa7LLtS9yN3QJmI5IITFahl00DFF9N1toRdwYkp8U-d1kZEjkuFLlUjBdSaoL0vQ7I-8nUe5dqJdC0nS3j7OruPi1h0IPVseK4RR1On7RP2bHoibbbTzUhP2H_VJ9eJXrZjorTzs2jCPV9TuFVt/s320/Screenshot%202026-10-10%20135857.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjgkegxAEHIpaeiFD14b8Gk8MWAyjuiW5sRlk-DklGGpWunt6xA1OmehyphenhyphenMEhs4y-SlRwipyCxBEt6dt-M1dMQ0tER0jOcAT8kG_-ta5TbgW35vWxNxuL8033XUjdN6MxEBUzD2T0BeJYdKGbAJ9-ZsqEfSQCu0DsqzaGbGogFnr3hn3j9ymOCIpjQHPaiQI/s320/Screenshot%202026-10-10%20135904.png",
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJnCEKRkE0iNDuw2h5BTOZKfdY9XCzNrMsmI2ErX_ALuoZuD4riTsoELlnL9CihP1IYk-Lo9_WNjrFafAdz68R2WWv2YmL3DxK3CySA3zpZr89gpHl8AHCJ8ohZlSHZ2cgE2JwohDP3r8TwZjtVBSiCIYfbbwbT52-ghHix6jWxJa7XOTBKgcWfDI7C7JN/s320/Screenshot%202026-10-10%20135912.png"
-        ];
-
-        // Gabungkan semua soal menjadi satu array berurutan (Total 48 soal)
-        const allQuestions = [
-            ...subTes1Images.map((img, i) => ({ id: i + 1, type: 'sub1', num: i + 1, img: img })),
-            ...subTes2Images.map((img, i) => ({ id: i + 13, type: 'sub2', num: i + 13, img: img }))
-        ];
-
-        let currentIndex = 0;
-        let answers = {};
-        let currentUser = "";
-        let currentPassword = "";
-        let timerInterval;
-
-        async function handleLogin(e) {
-            e.preventDefault();
-            const username = document.getElementById('usernameInput').value.trim();
-            const password = document.getElementById('passwordInput').value.trim();
-            const btnLogin = document.getElementById('btnLogin');
-
-            btnLogin.textContent = "Memeriksa Akun...";
-            btnLogin.disabled = true;
-
-            try {
-                // Fetch credentials langsung dari Google Apps Script (Action: getCredentials)
-                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getCredentials`);
-                const credentials = await response.json();
-
-                const found = credentials.find(c => c.username === username && c.password === password);
-                if(!found) {
-                    alert("Username atau Password salah! Silakan hubungi admin.");
-                    btnLogin.textContent = "Mulai Tes (35 Menit)";
-                    btnLogin.disabled = false;
-                    return;
-                }
-
-                currentUser = username;
-                currentPassword = password;
-
-                document.getElementById('displayUsername').textContent = currentUser;
-                document.getElementById('loginSection').classList.add('hidden');
-                document.getElementById('quizSection').classList.remove('hidden');
-
-                loadQuestion(currentIndex);
-                startTimer(35 * 60);
-
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Gagal terhubung ke database server. Pastikan koneksi atau URL Google Script benar.");
-                btnLogin.textContent = "Mulai Tes (35 Menit)";
-                btnLogin.disabled = false;
-            }
-        }
-
-        function loadQuestion(index) {
-            const q = allQuestions[index];
-            const isSub1 = index < 12;
-
-            document.getElementById('quizTitle').textContent = isSub1 ? "Sub Tes 1 (12 Soal)" : "Sub Tes 2 (36 Soal)";
-            document.getElementById('questionNumberIndicator').textContent = `SOAL NO ${q.num}`;
-            document.getElementById('progressIndicator').textContent = `${index + 1} dari ${allQuestions.length}`;
-            document.getElementById('questionImage').src = q.img;
-
-            // Render tombol pilihan angka 1 sampai 8
-            const optionsContainer = document.getElementById('optionsContainer');
-            optionsContainer.innerHTML = '';
-
-            const currentKey = isSub1 ? `sub1_${q.num}` : `sub2_${q.num}`;
-            const selectedAnswer = answers[currentKey] || "";
-
-            for(let i = 1; i <= 8; i++) {
-                const isSelected = selectedAnswer == i;
-                optionsContainer.innerHTML += `
-                    <button type="button" onclick="selectOption(${i})" 
-                        class="py-3 text-lg font-bold rounded-xl border transition duration-200 shadow-sm ${isSelected ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-white text-slate-700 border-slate-300 hover:bg-indigo-50'}">
-                        ${i}
-                    </button>
-                `;
-            }
-
-            // Tombol Navigasi Prev/Next/Submit
-            document.getElementById('prevBtn').classList.toggle('hidden', index === 0);
-            const nextBtn = document.getElementById('nextBtn');
-            if(index === allQuestions.length - 1) {
-                nextBtn.textContent = "Kirim Semua Jawaban";
-                nextBtn.className = "ml-auto px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition shadow-md";
-            } else {
-                nextBtn.textContent = "Selanjutnya";
-                nextBtn.className = "ml-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition shadow-md";
-            }
-        }
-
-        function selectOption(val) {
-            const q = allQuestions[currentIndex];
-            const isSub1 = currentIndex < 12;
-            const currentKey = isSub1 ? `sub1_${q.num}` : `sub2_${q.num}`;
-            
-            answers[currentKey] = val;
-            loadQuestion(currentIndex); // Refresh tampilan tombol yang aktif
-        }
-
-        function nextQuestion() {
-            if(currentIndex < allQuestions.length - 1) {
-                currentIndex++;
-                loadQuestion(currentIndex);
-            } else {
-                if(confirm("Apakah Anda yakin ingin mengirimkan seluruh jawaban tes?")) {
-                    submitAnswers();
-                }
-            }
-        }
-
-        function prevQuestion() {
-            if(currentIndex > 0) {
-                currentIndex--;
-                loadQuestion(currentIndex);
-            }
-        }
-
-        function startTimer(duration) {
-            let timer = duration, minutes, seconds;
-            const display = document.getElementById('timer');
-            
-            timerInterval = setInterval(() => {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
-
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                display.textContent = minutes + ":" + seconds;
-
-                if (--timer < 0) {
-                    clearInterval(timerInterval);
-                    alert("Waktu ujian telah habis! Jawaban akan dikirim otomatis.");
-                    submitAnswers();
-                }
-            }, 1000);
-        }
-
-        function submitAnswers() {
-            clearInterval(timerInterval);
-
-            let subTes1Answers = {};
-            let subTes2Answers = {};
-
-            for(let key in answers) {
-                if(key.startsWith('sub1_')) {
-                    subTes1Answers[key] = answers[key];
-                } else if(key.startsWith('sub2_')) {
-                    subTes2Answers[key] = answers[key];
-                }
-            }
-
-            const payload = {
-                username: currentUser,
-                password: currentPassword,
-                sub_tes_1: subTes1Answers,
-                sub_tes_2: subTes2Answers,
-                status: "Selesai & Disubmit"
-            };
-
-            fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).then(() => {
-                alert("Terima kasih! Jawaban Anda telah berhasil terekam ke database Google Sheets.");
-                window.location.reload();
-            }).catch(error => {
-                console.error("Error:", error);
-                alert("Terjadi kesalahan koneksi saat mengirim jawaban.");
-            });
-        }
-    </script>
-</body>
-</html>
+        const GOOGLE_SCRIPT_URL = "
