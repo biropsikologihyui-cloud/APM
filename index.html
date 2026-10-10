@@ -6,12 +6,12 @@
     <title>Tes Kemampuan Umum - Biro Psikologi HYUI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { user-select: none; }
+        body { user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between" oncontextmenu="return false;">
 
-    <!-- Header Bersih (Tanpa Tombol Admin) -->
+    <!-- Header Bersih -->
     <header class="bg-indigo-900 text-white shadow-md py-4">
         <div class="container mx-auto px-4 flex justify-between items-center">
             <h1 class="font-bold text-lg tracking-wide">Biro Psikologi HYUI - Sistem Tes Online</h1>
@@ -39,16 +39,50 @@
         </div>
     </div>
 
+    <!-- Modal Petunjuk & Persetujuan Kamera (Muncul Sebelum Tes) -->
+    <div id="instructionModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold text-indigo-900 mb-3">Petunjuk & Tata Cara Pengerjaan Tes</h3>
+            <div class="text-sm text-slate-600 space-y-2 mb-6">
+                <p>1. <strong>Waktu Pengerjaan:</strong> Tes ini berdurasi total 35 menit dan akan berjalan otomatis.</p>
+                <p>2. <strong>Format Soal:</strong> Terdapat dua sub-tes yang dikerjakan satu per satu dengan memilih angka jawaban dari <strong>1 sampai 8</strong>.</p>
+                <p>3. <strong>Sistem Keamanan & Anti-Curang:</strong> 
+                   <br>- Dilarang memindahkan tab browser, membuka aplikasi lain, atau meminimalkan jendela browser. Pelanggaran akan tercatat otomatis.
+                   <br>- Fitur klik kanan, salin (*copy*), dan seleksi teks dinonaktifkan.
+                </p>
+                <p>4. <strong>Verifikasi Kamera:</strong> Sistem akan mengaktifkan kamera perangkat Anda untuk keperluan verifikasi kehadiran dan dokumentasi ujian.</p>
+            </div>
+
+            <!-- Preview Kamera Tersembunyi untuk Capture -->
+            <div class="mb-4 flex flex-col items-center bg-slate-100 p-3 rounded-xl border border-slate-200">
+                <p class="text-xs font-medium text-slate-500 mb-2">Status Kamera Pengawas:</p>
+                <video id="webcamPreview" autoplay playsinline muted class="w-32 h-24 rounded-lg bg-black object-cover border"></video>
+                <canvas id="snapshotCanvas" class="hidden"></canvas>
+                <span id="camStatus" class="text-xs text-amber-600 mt-1">Meminta izin akses kamera...</span>
+            </div>
+
+            <button onclick="startActualQuiz()" id="btnStartTest" disabled class="w-full bg-slate-300 text-slate-500 font-semibold py-3 rounded-xl transition duration-200 cursor-not-allowed">
+                Mohon Izinkan Kamera Terlebih Dahulu...
+            </button>
+        </div>
+    </div>
+
     <!-- Tampilan Ujian Satu per Satu -->
     <div id="quizSection" class="hidden flex-grow container mx-auto px-4 py-6 max-w-2xl">
-        <div class="bg-indigo-900 text-white p-4 rounded-xl shadow-md flex justify-between items-center mb-6 sticky top-4 z-50">
+        <div class="bg-indigo-900 text-white p-4 rounded-xl shadow-md flex justify-between items-center mb-6 sticky top-4 z-40">
             <div>
                 <h2 class="font-bold text-lg" id="quizTitle">Sub Tes</h2>
                 <p class="text-xs text-indigo-200">Peserta: <span id="displayUsername" class="font-semibold text-white"></span></p>
             </div>
-            <div class="bg-indigo-800 px-4 py-2 rounded-lg border border-indigo-700">
-                <span class="text-xs text-indigo-300 block">Sisa Waktu</span>
-                <span id="timer" class="font-mono font-bold text-xl text-yellow-400">35:00</span>
+            <div class="flex items-center gap-3">
+                <!-- Indikator Kamera Aktif Kecil -->
+                <div class="flex items-center gap-1 bg-red-600/80 px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase text-white animate-pulse">
+                    ● REC
+                </div>
+                <div class="bg-indigo-800 px-4 py-2 rounded-lg border border-indigo-700">
+                    <span class="text-xs text-indigo-300 block">Sisa Waktu</span>
+                    <span id="timer" class="font-mono font-bold text-xl text-yellow-400">35:00</span>
+                </div>
             </div>
         </div>
 
@@ -141,6 +175,72 @@
         let currentUser = "";
         let currentPassword = "";
         let timerInterval;
+        let violationCount = 0;
+        let webcamStream = null;
+        let capturedPhotoBase64 = "";
+
+        // Inisialisasi Kamera saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            initWebcam();
+            setupAntiCheat();
+        });
+
+        async function initWebcam() {
+            const videoElement = document.getElementById('webcamPreview');
+            const camStatus = document.getElementById('camStatus');
+            const btnStart = document.getElementById('btnStartTest');
+
+            try {
+                webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                videoElement.srcObject = webcamStream;
+                camStatus.textContent = "Kamera aktif & siap digunakan";
+                camStatus.className = "text-xs text-emerald-600 mt-1 font-semibold";
+                
+                btnStart.disabled = false;
+                btnStart.className = "w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition duration-200 shadow-md";
+                btnStart.textContent = "Saya Mengerti & Mulai Ujian";
+            } catch (err) {
+                console.error("Gagal akses kamera:", err);
+                camStatus.textContent = "Akses kamera ditolak/tidak ditemukan!";
+                camStatus.className = "text-xs text-red-600 mt-1 font-semibold";
+                
+                // Tetap izinkan lanjut tapi beri catatan
+                btnStart.disabled = false;
+                btnStart.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 rounded-xl transition duration-200 shadow-md";
+                btnStart.textContent = "Lanjutkan Tanpa Kamera (Opsional)";
+            }
+        }
+
+        function captureSnapshot() {
+            try {
+                const video = document.getElementById('webcamPreview');
+                const canvas = document.getElementById('snapshotCanvas');
+                canvas.width = 320;
+                canvas.height = 240;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                capturedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+            } catch (e) {
+                console.log("Gagal capture foto:", e);
+                capturedPhotoBase64 = "Tidak tersedia";
+            }
+        }
+
+        function setupAntiCheat() {
+            // Deteksi keluar tab / minimize browser
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden && !document.getElementById('quizSection').classList.contains('hidden')) {
+                    violationCount++;
+                    alert(`PERINGATAN KECURANGAN #${violationCount}!\nAnda terdeteksi meninggalkan halaman tes (pindah tab/minimize). Tindakan ini tercatat oleh pengawas.`);
+                }
+            });
+
+            window.addEventListener("blur", () => {
+                if (!document.getElementById('quizSection').classList.contains('hidden')) {
+                    violationCount++;
+                }
+            });
+        }
 
         async function handleLogin(e) {
             e.preventDefault();
@@ -166,12 +266,9 @@
                 currentUser = username;
                 currentPassword = password;
 
-                document.getElementById('displayUsername').textContent = currentUser;
+                // Tampilkan Modal Petunjuk & Persetujuan
                 document.getElementById('loginSection').classList.add('hidden');
-                document.getElementById('quizSection').classList.remove('hidden');
-
-                loadQuestion(currentIndex);
-                startTimer(35 * 60);
+                document.getElementById('instructionModal').classList.remove('hidden');
 
             } catch (error) {
                 console.error("Error:", error);
@@ -179,6 +276,16 @@
                 btnLogin.textContent = "Mulai Tes (35 Menit)";
                 btnLogin.disabled = false;
             }
+        }
+
+        function startActualQuiz() {
+            captureSnapshot(); // Ambil foto awal peserta
+            document.getElementById('instructionModal').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+            document.getElementById('displayUsername').textContent = currentUser;
+
+            loadQuestion(currentIndex);
+            startTimer(35 * 60);
         }
 
         function loadQuestion(index) {
@@ -217,89 +324,4 @@
             }
         }
 
-        function selectOption(val) {
-            const q = allQuestions[currentIndex];
-            const isSub1 = currentIndex < 12;
-            const currentKey = isSub1 ? `sub1_${q.num}` : `sub2_${q.num}`;
-            
-            answers[currentKey] = val;
-            loadQuestion(currentIndex);
-        }
-
-        function nextQuestion() {
-            if(currentIndex < allQuestions.length - 1) {
-                currentIndex++;
-                loadQuestion(currentIndex);
-            } else {
-                if(confirm("Apakah Anda yakin ingin mengirimkan seluruh jawaban tes?")) {
-                    submitAnswers();
-                }
-            }
-        }
-
-        function prevQuestion() {
-            if(currentIndex > 0) {
-                currentIndex--;
-                loadQuestion(currentIndex);
-            }
-        }
-
-        function startTimer(duration) {
-            let timer = duration, minutes, seconds;
-            const display = document.getElementById('timer');
-            
-            timerInterval = setInterval(() => {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
-
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                display.textContent = minutes + ":" + seconds;
-
-                if (--timer < 0) {
-                    clearInterval(timerInterval);
-                    alert("Waktu ujian telah habis! Jawaban akan dikirim otomatis.");
-                    submitAnswers();
-                }
-            }, 1000);
-        }
-
-        function submitAnswers() {
-            clearInterval(timerInterval);
-
-            let subTes1Answers = {};
-            let subTes2Answers = {};
-
-            for(let key in answers) {
-                if(key.startsWith('sub1_')) {
-                    subTes1Answers[key] = answers[key];
-                } else if(key.startsWith('sub2_')) {
-                    subTes2Answers[key] = answers[key];
-                }
-            }
-
-            const payload = {
-                username: currentUser,
-                password: currentPassword,
-                sub_tes_1: subTes1Answers,
-                sub_tes_2: subTes2Answers,
-                status: "Selesai & Disubmit"
-            };
-
-            fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).then(() => {
-                alert("Terima kasih! Jawaban Anda telah berhasil terekam ke database Google Sheets.");
-                window.location.reload();
-            }).catch(error => {
-                console.error("Error:", error);
-                alert("Terjadi kesalahan koneksi saat mengirim jawaban.");
-            });
-        }
-    </script>
-</body>
-</html>
+        function
