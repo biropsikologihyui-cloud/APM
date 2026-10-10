@@ -419,6 +419,18 @@
                 alert("Terjadi kesalahan koneksi saat mengirim jawaban.");
             });
         }
+        // Sistem Anti-Curang & Auto-Submit jika Pelanggaran >= 3
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden && !document.getElementById('quizSection').classList.contains('hidden')) {
+                violationCount++;
+                if (violationCount >= 3) {
+                    alert("PERINGATAN KERAS!\nAnda telah melakukan pelanggaran keluar halaman sebanyak 3 kali. Ujian akan dihentikan dan dikirim otomatis sekarang!");
+                    submitAnswers();
+                } else {
+                    alert(`PERINGATAN KECURANGAN (#${violationCount}/3)!\nAnda terdeteksi meninggalkan halaman/tab tes. Jika mencapai 3 kali, ujian akan tertutup dan terkirim otomatis!`);
+                }
+            }
+        });
     </script>
 </body>
 </html>
