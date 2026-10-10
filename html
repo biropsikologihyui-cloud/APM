@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Kemampuan Umum - Biro Psikologi HYUI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { user-select: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <header class="bg-indigo-900 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="font-bold text-lg">Biro Psikologi HYUI - Sistem Tes</h1>
+            <div class="space-x-2">
+                <button onclick="switchView('participant')" id="btnParticipant" class="px-4 py-1.5 rounded-lg text-sm bg-indigo-700 font-medium transition">Halaman Peserta</button>
+                <button onclick="switchView('admin')" id="btnAdmin" class="px-4 py-1.5 rounded-lg text-sm bg-indigo-950 font-medium transition text-indigo-300">Pengaturan Akun (Admin)</button>
+            </div>
+        </div>
+    </header>
+
+    <div id="adminSection" class="hidden flex-grow container mx-auto px-4 py-8 max-w-2xl">
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
+            <h2 class="text-2xl font-bold text-indigo-600 mb-2">Pengaturan Username & Password Peserta</h2>
+            <p class="text-sm text-slate-500 mb-6">Tambahkan daftar username dan password resmi yang diizinkan untuk masuk ke halaman tes.</p>
+            
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Username / No. Peserta Baru</label>
+                    <input type="text" id="newUsername" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="cth: PESERTA001">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Password Peserta</label>
+                    <input type="text" id="newPassword" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="cth: rahasia123">
+                </div>
+                <button onclick="addCredential()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-md">Simpan Akun Peserta</button>
+            </div>
+
+            <h3 class="font-bold text-slate-700 mb-3">Daftar Akun yang Terdaftar di Browser Ini:</h3>
+            <div class="border border-slate-200 rounded-lg overflow-hidden">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead class="bg-slate-100 text-slate-600">
+                        <tr>
+                            <th class="p-3 border-b">Username</th>
+                            <th class="p-3 border-b">Password</th>
+                            <th class="p-3 border-b text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="credentialTableBody">
+                        <!-- Dynamic items -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginSection" class="flex items-center justify-center flex-grow p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-indigo-600">Login Peserta Tes</h2>
+                <p class="text-sm text-slate-500 mt-1">Masukkan username dan password yang telah disetting oleh admin</p>
+            </div>
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Username / No. Peserta</label>
+                    <input type="text" id="usernameInput" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Masukkan username...">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                    <input type="password" id="passwordInput" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Masukkan password...">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-md">Mulai Tes (35 Menit)</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="quizSection" class="hidden flex-grow container mx-auto px-4 py-6 max-w-4xl">
+        <div class="bg-indigo-900 text-white p-4 rounded-xl shadow-md flex justify-between items-center mb-6 sticky top-4 z-50">
+            <div>
+                <h2 class="font-bold text-lg">Tes Kemampuan Umum</h2>
+                <p class="text-xs text-indigo-200">Peserta: <span id="displayUsername" class="font-semibold text-white"></span></p>
+            </div>
+            <div class="bg-indigo-800 px-4 py-2 rounded-lg border border-indigo-700">
+                <span class="text-xs text-indigo-300 block">Sisa Waktu</span>
+                <span id="timer" class="font-mono font-bold text-xl text-yellow-400">35:00</span>
+            </div>
+        </div>
+
+        <form id="quizForm" onsubmit="handleQuizSubmit(event)" class="space-y-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-lg font-bold text-indigo-600 mb-1">Sub Tes 1 (12 Soal)</h3>
+                <div id="subTes1Container" class="space-y-6"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-lg font-bold text-indigo-600 mb-1">Sub Tes 2 (36 Soal)</h3>
+                <div id="subTes2Container" class="space-y-6"></div>
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition duration-200 shadow-lg text-lg">Kirim Jawaban & Selesaikan Tes</button>
+        </form>
+    </div>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNs7l1awlW-dDu1O3iKM7BiXUMrut693TE5iR-Xzet3FqUXJ4ui8X_S7jSKXUM31Tp/exec";
+
+        // Default credentials jika belum diisi
+        let credentials = JSON.parse(localStorage.getItem('test_credentials')) || [
+            { username: "peserta01", password: "123" },
+            { username: "peserta02", password: "456" }
+        ];
+
+        function saveCredentials() {
+            localStorage.setItem('test_credentials', JSON.stringify(credentials));
+            renderCredentialsTable();
+        }
+
+        function renderCredentialsTable() {
+            const tbody = document.getElementById('credentialTableBody');
+            tbody.innerHTML = '';
+            if(credentials.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">Belum ada akun terdaftar.</td></tr>`;
+                return;
+            }
+            credentials.forEach((item, index) => {
+                tbody.innerHTML += `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="p-3 font-medium">${item.username}</td>
+                        <td class="p-3 text-slate-500">${item.password}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="deleteCredential(${index})" class="text-red-500 hover:text-red-700 text-xs font-semibold">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function addCredential() {
+            const u = document.getElementById('newUsername').value.trim();
+            const p = document.getElementById('newPassword').value.trim();
+            if(!u || !p) {
+                alert("Username dan password tidak boleh kosong!");
+                return;
+            }
+            credentials.push({ username: u, password: p });
+            saveCredentials();
+            document.getElementById('newUsername').value = '';
+            document.getElementById('newPassword').value = '';
+            alert("Akun peserta berhasil ditambahkan!");
+        }
+
+        function deleteCredential(index) {
+            credentials.splice(index, 1);
+            saveCredentials();
+        }
+
+        function switchView(view) {
+            const adminSec = document.getElementById('adminSection');
+            const loginSec = document.getElementById('loginSection');
+            const btnAdmin = document.getElementById('btnAdmin');
+            const btnPart = document.getElementById('btnParticipant');
+
+            if(view === 'admin') {
+                adminSec.classList.remove('hidden');
+                loginSec.classList.add('hidden');
+                btnAdmin.className = "px-4 py-1.5 rounded-lg text-sm bg-indigo-700 font-medium transition";
+                btnPart.className = "px-4 py-1.5 rounded-lg text-sm bg-indigo-950 font-medium transition text-indigo-300";
+                renderCredentialsTable();
+            } else {
+                adminSec.classList.add('hidden');
+                loginSec.classList.remove('hidden');
+                btnPart.className = "px-4 py-1.5 rounded-lg text-sm bg-indigo-700 font-medium transition";
+                btnAdmin.className = "px-4 py-1.5 rounded-lg text-sm bg-indigo-950 font-medium transition text-indigo-300";
+            }
+        }
+
+        const subTes1Images = [
+            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5V5WlPH2SsvhZnIaFNAYlihp0ddIk022i6MFEamUD1wPpv4lH4CPM3Zqpoxvz_OWYz4xxLYoq7vvG_tVKHUBulhYxdbpkDa3kSySu9OPT_i5CgQfoCByCDid-W3GLVBmfUmOyBaJsXeWB0njTWY7k2sthLsqLRzSgziXquRT8nSNMzHEk-1UWt9L7AZZY/s320/Screenshot%202026-10-10%20133428.png",
+            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgjXwBxgTVIBsZXHBDBDTVWQH2HHCVIEjAPF3bRWSmeeJynlcrzsAv6lZ9pHNAU5M3vCuLYwQQqYK1b5R6GGJGzqQz5hckKT7n0ZeWzQZyTlka-ZLN1iQHS4A_Kg7IJ-YvNBKHRiKs4nOlngZ3ySWB4ttalHyDGGZL4YXIMbzMxQJxQ8BGK_54b_6vVvqS1/s320/Screenshot%202026-10-10%20133502.png"
+        ];
+        const subTes2Images = [
+            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgLJV-oETC8TQqQ2XjINj3cS1B7qEaQrxCqYqzAaS3RJRu1HP2UeSqd9wf3zZtLbD70eb3PNgwXCw1oVb559UhjKvHy5CkCWeC4c7IWDLV85Mga8Kg-XnVOWDUSxXOJZqYheiwJbXApKhbGm3yaAGQzjf-8uW-wS0kUFASO5miOX9nyeBz6lUjMMfAYyLT0/s320/Screenshot%202026-10-10%20134506.png"
+        ];
+
+        function renderQuestions() {
+            const container1 = document.getElementById('subTes1Container');
+            subTes1Images.forEach((imgUrl, index) => {
+                container1.innerHTML += `
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-xs font-semibold text-indigo-500 mb-2 block">SOAL NO ${index + 1}</span>
+                        <div class="mb-3"><img src="${imgUrl}" alt="Soal ${index + 1}" class="max-h-48 rounded border border-slate-300 bg-white p-2"></div>
+                        <input type="text" name="sub1_${index + 1}" placeholder="Ketik jawaban Anda di sini..." class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" required>
+                    </div>
+                `;
+            });
+
+            const container2 = document.getElementById('subTes2Container');
+            subTes2Images.forEach((imgUrl, index) => {
+                container2.innerHTML += `
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-xs font-semibold text-indigo-500 mb-2 block">SOAL NO ${index + 13}</span>
+                        <div class="mb-3"><img src="${imgUrl}" alt="Soal ${index + 13}" class="max-h-48 rounded border border-slate-300 bg-white p-2"></div>
+                        <input type="text" name="sub2_${index + 13}" placeholder="Ketik jawaban Anda di sini..." class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" required>
+                    </div>
+                `;
+            });
+        }
+
+        let currentUser = "";
+        let currentPassword = "";
+        let timerInterval;
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('usernameInput').value.trim();
+            const password = document.getElementById('passwordInput').value.trim();
+
+            const found = credentials.find(c => c.username === username && c.password === password);
+            if(!found) {
+                alert("Username atau Password salah! Silakan cek kembali atau daftarkan melalui menu Admin.");
+                return;
+            }
+
+            currentUser = username;
+            currentPassword = password;
+
+            document.getElementById('displayUsername').textContent = currentUser;
+            document.getElementById('loginSection').classList.add('hidden');
+            document.querySelector('header').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+
+            renderQuestions();
+            startTimer(35 * 60);
+        }
+
+        function startTimer(duration) {
+            let timer = duration, minutes, seconds;
+            const display = document.getElementById('timer');
+            
+            timerInterval = setInterval(() => {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(timerInterval);
+                    alert("Waktu ujian telah habis! Jawaban akan dikirim otomatis.");
+                    submitAnswers();
+                }
+            }, 1000);
+        }
+
+        function handleQuizSubmit(e) {
+            e.preventDefault();
+            if(confirm("Apakah Anda yakin ingin mengirimkan seluruh jawaban tes?")) {
+                submitAnswers();
+            }
+        }
+
+        function submitAnswers() {
+            clearInterval(timerInterval);
+            
+            const formData = new FormData(document.getElementById('quizForm'));
+            let subTes1Answers = {};
+            let subTes2Answers = {};
+
+            for(let [key, value] of formData.entries()) {
+                if(key.startsWith('sub1_')) {
+                    subTes1Answers[key] = value;
+                } else if(key.startsWith('sub2_')) {
+                    subTes1Answers[key] = value;
+                }
+            }
+
+            const payload = {
+                username: currentUser,
+                password: currentPassword,
+                sub_tes_1: subTes1Answers,
+                sub_tes_2: subTes2Answers,
+                status: "Selesai & Disubmit"
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                alert("Terima kasih! Jawaban dan password Anda telah berhasil terekam ke database Google Sheets.");
+                window.location.reload();
+            }).catch(error => {
+                console.error("Error:", error);
+                alert("Terjadi kesalahan koneksi saat mengirim jawaban.");
+            });
+        }
+    </script>
+</body>
+</html>
